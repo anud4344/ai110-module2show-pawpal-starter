@@ -2,15 +2,29 @@
 
 ## 1. System Design
 
-**a. Initial design**
+Before designing the classes, I identified three main actions a user should be able to perform in PawPal+.
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+First, the user should be able to enter basic owner and pet information. For example, they should be able to add the owner’s name, the pet’s name, and the pet’s species so the app can create a plan for the correct pet.
+
+Second, the user should be able to add pet care tasks. These tasks could include feeding, walking, medication, grooming, or playtime. Each task should include important details like the task name, how long it takes, and how high priority it is.
+
+Third, the user should be able to generate a daily care schedule. The app should look at the available tasks, the time available, and the task priorities, then create a plan that puts the most important tasks first. The schedule should also be easy to understand so the owner knows what to do and why those tasks were chosen.
+
+
+a. Initial design
+
+For my initial design, I chose four main classes: Owner, Pet, Task, and Scheduler. I chose these because they matched the main parts of the PawPal+ app: a pet owner, their pet, the care tasks they need to do, and the scheduling logic that organizes those tasks.
+
+The Owner class is responsible for storing information about the person using the app, such as their name, available time, and preferences. The Pet class represents the pet being cared for and stores details like the pet’s name, species, and list of tasks. The Task class represents one care activity, such as feeding, walking, medication, grooming, or playtime. Each task needs information like a title, duration, priority, category, and whether it is completed.
+
+The Scheduler class is responsible for the planning part of the app. Its job is to take the available tasks, look at the available time, sort or prioritize the tasks, and build a daily care plan. I wanted to keep the scheduler separate from the task and pet classes because scheduling is the main logic of the app, while the other classes mostly store information.
+
 
 **b. Design changes**
 
-- Did your design change during implementation?
-- If yes, describe at least one change and why you made it.
+After reviewing my class skeleton with Claude Code, I noticed that a few relationships from my UML were not fully represented in the Python code yet. My UML showed that an Owner owns a Pet, but my first version of the Owner class did not actually store a pet reference. I also realized that the scheduler would eventually need access to owner preferences, since preferences are part of the constraints for building a useful daily plan.
+
+Based on that feedback, I made three small design updates. I added a pet attribute to Owner, a preferences value to Scheduler, and a scheduled_time field to Task so the schedule can later show when each task is planned. I did not implement the full scheduling logic yet because this phase was mainly about making sure the class skeleton matched the UML and project requirements. These changes made the design feel more complete before moving on to the actual scheduler implementation.
 
 ---
 
