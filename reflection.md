@@ -37,8 +37,9 @@ Based on that feedback, I made three small design updates. I added a pet attribu
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+One tradeoff my scheduler makes is that the conflict detection is simple. It checks whether two tasks have the exact same scheduled_time, but it does not fully calculate whether task durations overlap. For example, if one task starts at 08:00 and takes 30 minutes, and another task starts at 08:15, a real calendar would treat that as a conflict, but my current version would not catch it unless the start times match exactly.
+
+I think this tradeoff is reasonable for this project because PawPal+ is still a beginner-level scheduling app, and exact-time conflict detection is easier to understand and test. It still gives the user a useful warning when two tasks are clearly scheduled at the same time, without making the algorithm too complicated. If I had more time, I would improve this by converting scheduled times into minutes and checking whether the full time ranges overlap.
 
 ---
 
