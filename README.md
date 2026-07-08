@@ -110,12 +110,29 @@ Run `python -m pytest` to verify the core logic — task completion, adding task
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+This walkthrough describes how a user can interact with PawPal+ from start to finish without having to first watch a demo video.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Start the app by running `python -m streamlit run app.py`.
+2. Enter basic owner and pet information, such as the owner name, pet name, pet species, and available care time for the day.
+3. Add pet care tasks by entering a task title, duration, priority, and scheduled time.
+4. After each task is added, the app displays the current task list so the user can confirm the task was saved.
+5. The app uses the backend `Pet` and `Task` classes to store tasks instead of only displaying temporary UI values.
+6. The scheduler can show task information in a clearer way by sorting tasks by scheduled time and showing incomplete tasks separately.
+7. If two tasks are entered with the same scheduled time, the app displays a conflict warning so the user knows the schedule may need adjustment.
+8. When the user clicks Generate schedule, the app uses the Scheduler class to build a daily plan based on task priority and available time.
+9. The generated schedule shows which tasks fit into the day and which tasks were skipped because there was not enough time.
+10. This demonstrates the full PawPal+ workflow: entering pet information, adding care tasks, detecting scheduling issues, and generating a daily care plan.
+
+Sample CLI output from running `python main.py`:
+
+```text
+Today's Schedule
+----------------
+Daily plan:
+- 0 min: Morning walk (20 min, priority: high)
+- 20 min: Breakfast feeding (10 min, priority: high)
+- 30 min: Clean litter box (15 min, priority: medium)
+Skipped (not enough time left):
+- Playtime (25 min, priority: low)
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
