@@ -62,36 +62,93 @@ st.session_state.owner.pet = st.session_state.pet
 st.markdown("### Tasks")
 st.caption("Add a few tasks. These now create real Task objects and store them on the Pet.")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
+
 with col1:
     task_title = st.text_input("Task title", value="Morning walk")
+
 with col2:
     duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
+
 with col3:
     priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+
+with col4:
+    scheduled_time = st.text_input("Scheduled time", value="08:00")
 
 if st.button("Add task"):
     new_task = Task(
         title=task_title,
         duration_minutes=int(duration),
         priority=priority,
+        scheduled_time=scheduled_time,
     )
     st.session_state.pet.add_task(new_task)
     st.success(f"Added task: {task_title}")
 
-if st.session_state.pet.get_tasks():
+tasks = st.session_state.pet.get_tasks()
+
+if tasks:
     st.write("Current tasks:")
+
     task_rows = []
-    for task in st.session_state.pet.get_tasks():
+    for task in tasks:
         task_rows.append(
             {
                 "Title": task.title,
                 "Duration": task.duration_minutes,
                 "Priority": task.priority,
+                "Scheduled Time": task.scheduled_time,
                 "Completed": task.completed,
             }
         )
+
     st.table(task_rows)
+
+    scheduler_preview = Scheduler(
+        tasks=tasks.copy(),
+        available_time=st.session_state.owner.available_time,
+        preferences=st.session_state.owner.preferences,
+    )
+
+    conflict_message = scheduler_preview.detect_conflicts()
+
+    if conflict_message != "No conflicts detected.":
+        st.warning(conflict_message)
+    else:
+        st.success("No task conflicts detected.")
+
+    scheduler_preview.sort_by_time()
+
+    sorted_rows = []
+    for task in scheduler_preview.tasks:
+        sorted_rows.append(
+            {
+                "Title": task.title,
+                "Scheduled Time": task.scheduled_time,
+                "Priority": task.priority,
+                "Duration": task.duration_minutes,
+            }
+        )
+
+    st.write("Tasks sorted by scheduled time:")
+    st.table(sorted_rows)
+
+    incomplete_tasks = scheduler_preview.filter_by_status(False)
+
+    incomplete_rows = []
+    for task in incomplete_tasks:
+        incomplete_rows.append(
+            {
+                "Title": task.title,
+                "Scheduled Time": task.scheduled_time,
+                "Priority": task.priority,
+            }
+        )
+
+    st.write("Incomplete tasks:")
+    st.table(incomplete_rows)
+
 else:
     st.info("No tasks yet. Add one above.")
 

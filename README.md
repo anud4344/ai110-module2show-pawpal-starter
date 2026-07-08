@@ -79,16 +79,34 @@ Sample test output:
 
 I would rate my system reliability as 4 out of 5 stars. The automated tests passed, including tests for task completion, adding tasks to a pet, sorting by scheduled time, recurring task creation, and conflict detection. I am not giving it a full 5 stars because the app still has some simple scheduling assumptions, like detecting exact time matches instead of full overlapping time ranges.
 
-## 📐 Smarter Scheduling
+## ✨ Features
 
-> Fill in once you've implemented scheduling logic.
+**Owner & pet setup**
+The Streamlit app lets you enter an owner's name and available time, plus a pet's name and species. These are stored as real `Owner` and `Pet` objects (`app.py`) that persist across reruns using `st.session_state`.
 
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | `Scheduler.sort_tasks()` and `Scheduler.sort_by_time()` | Sorts tasks by priority first, and can also sort tasks by scheduled time so the plan is easier to read. |
-| Filtering | `Scheduler.filter_by_status()` and `Scheduler.filter_by_pet_name()` | Filters tasks by completion status or pet name, so the owner can see only incomplete tasks or tasks for one specific pet. |
-| Conflict handling | `Scheduler.detect_conflicts()` | Checks if two or more tasks have the same scheduled time and returns a warning message instead of crashing. |
-| Recurring tasks | `Task.create_next_occurrence()` | Creates a new task for the next day or next week when a daily or weekly task repeats. |
+**Adding tasks**
+Each task captures a title, duration, priority, and scheduled time. Under the hood this creates a `Task` object and adds it to the pet's task list via `Pet.add_task()`, which also stamps the task with the pet's name so it can be filtered later.
+
+**Building a daily schedule**
+`Scheduler.build_schedule()` takes all of a pet's tasks and fits as many as it can into the owner's available time, always favoring higher-priority tasks first. Tasks that don't fit are left out and reported separately rather than silently dropped.
+
+**Priority and time sorting**
+`Scheduler.sort_tasks()` orders tasks high → medium → low priority. `Scheduler.sort_by_time()` orders them chronologically by `scheduled_time`, with unscheduled tasks pushed to the end — handy for reviewing the day's plan at a glance.
+
+**Filtering**
+`Scheduler.filter_by_status()` splits tasks into completed vs. incomplete, and `Scheduler.filter_by_pet_name()` narrows the list down to one pet — useful once a household has more than one animal to track.
+
+**Conflict detection**
+`Scheduler.detect_conflicts()` scans for tasks that share the exact same `scheduled_time` and returns a warning message naming the conflicting tasks, instead of letting them silently overlap.
+
+**Daily & weekly recurring tasks**
+Tasks can be marked `frequency="daily"` or `"weekly"`. Calling `Task.create_next_occurrence()` generates the next task instance with the due date pushed forward by 1 day or 7 days. One-off tasks (`frequency="once"`) simply return `None` — they don't recur.
+
+**Schedule results in the UI**
+The Streamlit app surfaces all of this directly: it shows the current task table, flags conflicts with a warning banner, displays the time-sorted list, and prints the full explained plan (including anything skipped) via `Scheduler.explain_plan()`.
+
+**Automated tests**
+Run `python -m pytest` to verify the core logic — task completion, adding tasks to a pet, sorting by scheduled time, daily recurrence, and conflict detection all have dedicated tests in `tests/test_pawpal.py`.
 
 ## 📸 Demo Walkthrough
 
